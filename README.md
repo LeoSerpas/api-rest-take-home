@@ -42,10 +42,12 @@ Internamente, un scheduler se ejecuta cada 10 segundos y procesa de forma autom�
 
 ### Flujo de estados
 
+```
 RECEIVED → PROCESSING → PROCESSED
                       ↘ FAILED
                       ↘ RETRY_PENDING → PROCESSING → ... 
                       (aquí el flujo puede volver a repetirse hasta terminar en PROCESSED o FAILED)
+```
 
 ## Stack tecnológico
 
