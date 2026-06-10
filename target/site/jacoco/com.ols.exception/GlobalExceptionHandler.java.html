@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.ols.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.ols.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+@RestControllerAdvice
+<span class="fc" id="L14">public class GlobalExceptionHandler {</span>
+
+    private static final String TIMESTAMP = &quot;timestamp&quot;;
+    private static final String STATUS = &quot;status&quot;;
+    private static final String ERROR = &quot;error&quot;;
+    private static final String MESSAGE = &quot;message&quot;;
+    private static final String CAMPO = &quot;El campo '&quot;;
+
+    // Maneja transacciones duplicadas
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleDuplicate(IllegalStateException ex) {
+<span class="fc" id="L25">        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(</span>
+<span class="fc" id="L26">            TIMESTAMP, LocalDateTime.now(),</span>
+<span class="fc" id="L27">            STATUS, 409,</span>
+            ERROR, &quot;Conflict&quot;,
+<span class="fc" id="L29">            MESSAGE, ex.getMessage()</span>
+        ));
+    }
+
+    // Maneja cualquier otro error inesperado
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleGeneric(Exception ex) {
+<span class="fc" id="L36">        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(</span>
+<span class="fc" id="L37">            TIMESTAMP, LocalDateTime.now(),</span>
+<span class="fc" id="L38">            STATUS, 500,</span>
+            ERROR, &quot;Internal Server Error&quot;,
+            MESSAGE, &quot;Ocurrió un error inesperado&quot;
+        ));
+    }
+   @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleNotReadable(HttpMessageNotReadableException ex) {
+<span class="fc" id="L45">        String message = &quot;Valor inválido en el cuerpo de la petición.&quot;;</span>
+
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        String causeMessage = ex.getCause() != null ? ex.getCause().getMessage() : &quot;&quot;;</span>
+
+        // Enum inválido
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (causeMessage.contains(&quot;not one of the values accepted for Enum class&quot;)) {</span>
+
+<span class="fc" id="L52">            String field = &quot;desconocido&quot;;</span>
+<span class="fc" id="L53">            java.util.regex.Matcher fieldMatcher = java.util.regex.Pattern</span>
+<span class="fc" id="L54">                    .compile(&quot;\\[\&quot;(\\w+)\&quot;\\]&quot;)</span>
+<span class="fc" id="L55">                    .matcher(causeMessage);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            while (fieldMatcher.find()) {</span>
+<span class="fc" id="L57">                field = fieldMatcher.group(1);</span>
+            }
+
+<span class="fc" id="L60">            String validValues = &quot;&quot;;</span>
+<span class="fc" id="L61">            java.util.regex.Matcher valuesMatcher = java.util.regex.Pattern</span>
+<span class="fc" id="L62">                    .compile(&quot;Enum class: \\[([A-Z, ]+)\\]&quot;)</span>
+<span class="fc" id="L63">                    .matcher(causeMessage);</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (valuesMatcher.find()) {</span>
+<span class="fc" id="L65">                validValues = valuesMatcher.group(1);</span>
+            }
+
+<span class="fc" id="L68">            message = CAMPO + field + &quot;' tiene un valor inválido. &quot;</span>
+                    + &quot;Los valores permitidos son: &quot; + validValues;
+
+        // Fecha/hora inválida
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">        } else if (causeMessage.contains(&quot;LocalDateTime&quot;) || causeMessage.contains(&quot;LocalDate&quot;)</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">                || causeMessage.contains(&quot;Cannot deserialize value of type `java.time&quot;)) {</span>
+
+<span class="fc" id="L75">            String field = &quot;desconocido&quot;;</span>
+<span class="fc" id="L76">            java.util.regex.Matcher fieldMatcher = java.util.regex.Pattern</span>
+<span class="fc" id="L77">                    .compile(&quot;\\[\&quot;(\\w+)\&quot;\\]&quot;)</span>
+<span class="fc" id="L78">                    .matcher(causeMessage);</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            while (fieldMatcher.find()) {</span>
+<span class="fc" id="L80">                field = fieldMatcher.group(1);</span>
+            }
+
+<span class="fc" id="L83">            message = CAMPO + field + &quot;' tiene un formato de fecha inválido. &quot;</span>
+                    + &quot;El formato esperado es: yyyy-MM-ddTHH:mm:ss (Ejemplo: 2026-06-07T17:00:00)&quot;;
+        }
+
+<span class="fc" id="L87">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(</span>
+<span class="fc" id="L88">            TIMESTAMP, LocalDateTime.now(),</span>
+<span class="fc" id="L89">            STATUS, 400,</span>
+            ERROR, &quot;Bad Request&quot;,
+            MESSAGE, message
+        ));
+    }
+    // Maneja parámetros de URL con tipo inválido (enums, números, etc. Para el api con detalle Paginado)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleValidation(MethodArgumentNotValidException ex) {
+<span class="fc" id="L97">        String errors = ex.getBindingResult()</span>
+<span class="fc" id="L98">                .getFieldErrors()</span>
+<span class="fc" id="L99">                .stream()</span>
+<span class="fc" id="L100">                .map(e -&gt; {</span>
+                    // Si tiene mensaje de validación (@NotBlank, @NotNull, etc.)
+<span class="fc bfc" id="L102" title="All 4 branches covered.">                    if (e.getRejectedValue() == null || e.getDefaultMessage() == null) {</span>
+<span class="fc" id="L103">                        return CAMPO + e.getField() + &quot;' tiene un valor inválido.&quot;;</span>
+                    }
+                    // Si es error de conversión de tipo (enum, número, etc.)
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                    if (e.getDefaultMessage().contains(&quot;Failed to convert&quot;)) {</span>
+<span class="fc" id="L107">                        return &quot;El parámetro '&quot; + e.getField() + &quot;' tiene un valor inválido: '&quot;</span>
+<span class="fc" id="L108">                                + e.getRejectedValue() + &quot;'.&quot;;</span>
+                    }
+                    // Mensaje normal de validación
+<span class="fc" id="L111">                    return e.getField() + &quot;: &quot; + e.getDefaultMessage();</span>
+                })
+<span class="fc" id="L113">                .collect(java.util.stream.Collectors.joining(&quot;, &quot;));</span>
+
+<span class="fc" id="L115">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(</span>
+<span class="fc" id="L116">            TIMESTAMP, LocalDateTime.now(),</span>
+<span class="fc" id="L117">            STATUS, 400,</span>
+            ERROR, &quot;Bad Request&quot;,
+            MESSAGE, errors
+        ));
+    }
+    
+    // En TransactionService — cuando no existe el ID solicitado, se lanza IllegalArgumentException con mensaje &quot;Transacción no encontrada con ID: {id}&quot;    
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleNotFound(IllegalArgumentException ex) {
+<span class="fc" id="L126">        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(</span>
+<span class="fc" id="L127">            TIMESTAMP, LocalDateTime.now(),</span>
+<span class="fc" id="L128">            STATUS, 404,</span>
+            ERROR, &quot;Not Found&quot;,
+<span class="fc" id="L130">            MESSAGE, ex.getMessage()</span>
+        ));
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,13 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+,com.ols,ApiRestTakeHomeApplication,5,3,0,0,2,1,1,1,1,1
+,com.ols.exception,GlobalExceptionHandler,0,193,3,19,0,54,3,15,0,7
+,com.ols.dto,TransactionFilterDTO,0,9,0,0,0,3,0,1,0,1
+,com.ols.enums,TransactionType,0,33,0,0,0,6,0,1,0,1
+,com.ols.enums,TransactionStatus,0,33,0,0,0,6,0,1,0,1
+,com.ols.service,TransactionService,0,368,0,12,0,107,0,17,0,11
+,com.ols.controller,TransactionController,34,0,0,0,8,0,4,0,4,0
+,com.ols.scheduler,TransactionProcessor,0,70,0,8,0,16,0,6,0,2
+,com.ols.config,SwaggerConfig,0,17,0,0,0,6,0,2,0,2
+,com.ols.filter,MdcFilter,19,3,0,0,6,1,1,1,1,1
+,com.ols.entity,TransactionEvent,4,0,0,0,2,0,1,0,1,0
+,com.ols.entity,Transaction,4,0,0,0,2,0,1,0,1,0

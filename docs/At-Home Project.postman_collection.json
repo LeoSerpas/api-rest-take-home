@@ -1,0 +1,154 @@
+{
+  "info": {
+    "_postman_id": "3a147d4b-709c-461e-8862-4ce4b4d0fd62",
+    "name": "At-Home Project",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "14310205"
+  },
+  "item": [
+    {
+      "name": "RegistrarTrx",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"externalId\": \"EXT-20260609-001\",\r\n  \"transactionType\": \"PAYMENT\",\r\n  \"sourceSystem\": \"SYSTEM_A\",\r\n  \"receivedAt\": \"2026-06-09T10:30:00\",\r\n  \"payload\": \"{\\\"amount\\\": 1500.00, \\\"currency\\\": \\\"USD\\\"}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transactions",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transactions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ConsultarTrxsAll",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transactions",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transactions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ConsultarTrxsPaginadas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transactions?status=PROCESSED&transactionType=PAYMENT&sourceSystem=SYSTEM_A&page=0&size=10",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transactions"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "PROCESSED"
+            },
+            {
+              "key": "transactionType",
+              "value": "PAYMENT"
+            },
+            {
+              "key": "sourceSystem",
+              "value": "SYSTEM_A"
+            },
+            {
+              "key": "dateFrom",
+              "value": "2026-06-01T00:00:00",
+              "disabled": true
+            },
+            {
+              "key": "dateTo",
+              "value": "2026-06-09T23:59:59",
+              "disabled": true
+            },
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DetalleTrxByID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transactions/9",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transactions",
+            "9"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ReprocesarTrxFAILED",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transactions/34/reprocess",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "transactions",
+            "34",
+            "reprocess"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

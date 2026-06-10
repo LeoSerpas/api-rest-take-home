@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Transaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report"></a> &gt; <a href="index.source.html" class="el_package">com.ols.entity</a> &gt; <span class="el_source">Transaction.java</span></div><h1>Transaction.java</h1><pre class="source lang-java linenums">package com.ols.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import java.time.LocalDateTime;
+import com.ols.enums.TransactionType;
+import com.ols.enums.TransactionStatus;
+
+@Entity
+@Table(name = &quot;transactions&quot;)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * Identificador externo único (idempotencia).
+     */
+    @NotBlank(message = &quot;El identificador externo es obligatorio&quot;)
+    @Column(name = &quot;external_id&quot;, nullable = false, unique = true, length = 100)
+    private String externalId;
+
+    /**
+     * Tipo de transacción válido (validado por enum).
+     */
+    @NotNull(message = &quot;El tipo de transacción es obligatorio&quot;)
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;transaction_type&quot;, nullable = false, length = 50)
+    private TransactionType transactionType;
+
+    /**
+     * Sistema origen que envía la transacción.
+     */
+    @NotBlank(message = &quot;El sistema origen es obligatorio&quot;)
+    @Column(name = &quot;source_system&quot;, nullable = false, length = 100)
+    private String sourceSystem;
+
+    /**
+     * Fecha/hora de recepción de la transacción.
+     */
+    @NotNull(message = &quot;La fecha/hora de recepción es obligatoria&quot;)
+    @Column(name = &quot;received_at&quot;, nullable = false)
+    private LocalDateTime receivedAt;
+
+    /**
+     * Payload o detalle de la transacción (no puede estar vacío).
+     */
+    @NotBlank(message = &quot;El payload no puede estar vacío&quot;)
+    @Column(name = &quot;payload&quot;, nullable = false, columnDefinition = &quot;TEXT&quot;)
+    private String payload;
+
+    /**
+     * Fecha/hora de registro en BD (se asigna automáticamente).
+     */
+    @Column(name = &quot;created_at&quot;, nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    /**
+     * Estado actual de la transacción.
+     */
+    @NotNull(message = &quot;El estado de la transacción es obligatorio&quot;)
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;status&quot;, nullable = false, length = 20)
+    private TransactionStatus status;
+
+    @PrePersist
+    protected void onCreate() {
+<span class="nc" id="L76">        this.createdAt = LocalDateTime.now();</span>
+<span class="nc" id="L77">    }</span>
+    
+    /**
+     * Mensaje de error si la transacción falló.
+     */
+    @Column(name = &quot;error_message&quot;, length = 500)
+    private String errorMessage;
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
