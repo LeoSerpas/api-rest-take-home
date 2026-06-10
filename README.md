@@ -10,6 +10,7 @@ Internamente, un scheduler se ejecuta cada 10 segundos y procesa de forma autom�
 
 ### Arquitectura
 
+```
 ───────────────────────────────────────────────────────
 |                   TransactionController              
 |           POST /api/transactions                     
@@ -37,6 +38,7 @@ Internamente, un scheduler se ejecuta cada 10 segundos y procesa de forma autom�
 |            TransactionProcessor (@Scheduled)         
 |    Cada 10 s: procesa RECEIVED y RETRY_PENDING       
 ───────────────────────────────────────────────────────
+```
 
 ### Flujo de estados
 
@@ -740,7 +742,9 @@ Evidencia gráfica de que todo funciona:
 
 > **Nota:** No es necesario agregarlo todo pero tener una referencia visual ayuda mucho a hacer las pruebas posteriores al desarrollo.
 
-- **Estructura sugerida:**
+**Estructura sugerida:**
+
+```
 README.md        → guía rápida para correr el proyecto (instalación, comandos)
 Documentos Word  → documentación formal y completa
 
@@ -752,3 +756,4 @@ proyecto/
 │   └── 3-Pruebas.docx
 ├── README.md
 └── pom.xml
+```
